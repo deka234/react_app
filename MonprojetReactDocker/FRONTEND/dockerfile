@@ -1,0 +1,16 @@
+# Dockerfile
+
+# Étape 1 : build l'app React
+FROM node:18-alpine AS build
+WORKDIR /app
+COPY package.json ./
+COPY package-lock.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Étape 2 : serveur Nginx pour servir l'app
+FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
