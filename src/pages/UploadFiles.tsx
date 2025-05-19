@@ -1,6 +1,8 @@
 import { ChangeEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+
 type UploadStatus= "idle"|"uploading"|'success'|'error';
 export default function FileUploader(){
     const [file,setFile]=useState<File| null>(null);
@@ -14,10 +16,27 @@ export default function FileUploader(){
      async function handFileUpload(){
         if(!file) return;
         SetStatus("uploading");
+
         const formData=new FormData();
         formData.append('file',file);
+        try{
+        const response = await fetch("http://localhost:3000/upload",{
+            method:"POST",
+            body:formData
+        });
+    if (!response.ok) throw new Error("Upload failed");
+
+              const data = await response.json();
+              console.log("Réponse du serveur :", data);
+              SetStatus("success");
+  } catch (err) {
+    console.error("Erreur :", err);
+    SetStatus("error");
+  }
+}
+      
         
-     }
+     
     return (
         <div className="space-y-4">
              
