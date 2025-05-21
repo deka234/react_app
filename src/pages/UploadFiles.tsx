@@ -1,16 +1,27 @@
 import { ChangeEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import { Card } from "@/components/ui/card";
 
 type UploadStatus= "idle"|"uploading"|'success'|'error';
 export default function FileUploader(){
     const [file,setFile]=useState<File| null>(null);
     const [status,SetStatus]=useState<UploadStatus>('idle')
     function handleFileChange(e:ChangeEvent<HTMLInputElement>){
-        if (e.target.files){
-            setFile(e.target.files[0]);
-             console.log(e.target.files[0])
+        if (e.target.files && e.target.files[0]){
+            
+            const selected_file=e.target.files[0];
+            if(selected_file.type=="application/pdf"){
+                setFile(selected_file);
+
+            }
+            else{
+               // alert("veuillez choisir un fichier pdf")
+                 setFile(null);
+            }
+             
+
+             
         }
     }
      async function handFileUpload(){
@@ -38,9 +49,10 @@ export default function FileUploader(){
         
      
     return (
+        <Card className="h-50  border-4 border-blue-800 rounded-3xl">
         <div className="space-y-4">
-             
-            <Input  id="file" type='file' onChange={handleFileChange}/>
+            
+            <Input className="border-4 border-blue-900 rounded-2xl" id="file" type='file' accept="application/pdf" onChange={handleFileChange}/>
             {file &&(
                 <div className="mb-4 text-sm bg-text-500">
                     <p>File name: {file.name}</p>
@@ -50,5 +62,6 @@ export default function FileUploader(){
             )}
             {file && status !=='uploading'&& <button onClick={handFileUpload}>Upload</button> }
         </div>
+        </Card>
     )
 }
